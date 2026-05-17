@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Mallas - CATRINSA</title>
+    <style>
+        /* Estilos alineados a la identidad de CATRINSA */
+        /* Elaboro Ing. Luis Gerardo Vazquez Carrier
+           Fecha : 17/05/2026
+
+        */
+        :root { 
+            --catrinsa-blue: #000080; 
+            --catrinsa-gray: #8e8e8e; 
+            --catrinsa-white: #ffffff; 
+            --bg-body: #f4f7f6; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        .container { max-width: 1200px; margin: auto; }
+        
+        header { 
+            border-bottom: 4px solid var(--catrinsa-blue); 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        h2 { color: var(--catrinsa-blue); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        #buscador { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 30px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1.1rem; 
+            outline: none; 
+            box-sizing: border-box; 
+            transition: 0.3s; 
+        }
+
+        #buscador:focus { 
+            border-color: var(--catrinsa-blue); 
+            box-shadow: 0 0 8px rgba(0,0,128,0.1); 
+        }
+
+        /* Grid de Tarjetas */
+        .grid-mallas { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            transition: transform 0.3s; 
+            border: 1px solid #eee; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 20px rgba(0,0,128,0.15); 
+        }
+        
+        .img-container { 
+            width: 100%; 
+            height: 180px; 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px; 
+            box-sizing: border-box;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .img-malla { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .info { padding: 20px; flex-grow: 1; text-align: center; }
+        
+        .id-label { 
+            font-size: 0.75rem; 
+            color: var(--catrinsa-gray); 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+        }
+
+        .tipo-malla { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 10px; 
+            display: block; 
+        }
+
+        .especificaciones {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .abertura { 
+            font-size: 1.1rem; 
+            color: var(--catrinsa-blue); 
+            font-weight: bold; 
+            display: block;
+        }
+
+        .medida-malla {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .detalles-footer { 
+            border-top: 1px solid #eee; 
+            padding: 15px; 
+            background: #fcfcfc; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .material-tag { 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            color: #444; 
+            text-transform: uppercase;
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-ver { 
+            background: var(--catrinsa-blue); 
+            color: white; 
+            text-decoration: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            font-size: 0.85rem; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h2>Inventario de Mallas</h2>
+            <small style="color: #666;">CATRINSA - Control de Cribado</small>
+        </div>
+        <a href="index.html" style="color: var(--catrinsa-blue); font-weight: bold; text-decoration: none;">← Volver al Menú</a>
+    </header>
+
+    <input type="text" id="buscador" onkeyup="filtrarMallas()" placeholder="Buscar por ID, Abertura, Material o Tipo...">
+
+    <div class="grid-mallas" id="contenedorMallas">
+        </div>
+</div>
+
+<script>
+    /* LISTA DE DATOS DE MALLAS
+       id: Nombre de la foto en img/mallas/
+    */
+    const mallas = [
+        {id:    "M004"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Alto carbon "},
+{id:    "M009"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon "},
+{id:    "M026"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     "},
+{id:    "M028"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   0.620   ",material : "   Auto limpiable     "},
+{id:    "M030"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     "},
+{id:    "M048"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon "},
+{id:    "M019"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon "},
+{id:    "M020"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 7/8 ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon "},
+{id:    "M044"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon "},
+{id:    "M051"  ,tipo :"    Malla Rectangular criba 5x20    ", abertura : " 3/8x 1-1/2  ",dimensiones:" 2.490   x   1.200   ",material : "  Acero al carbon "},
+{id:    "M008"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 3/16    ",dimensiones:" 2.480   x   1.240   ",material : "   Auto limpiable     "},
+{id:    "M010"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon "},
+{id:    "M015"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon "},
+{id:    "M016"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1   ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon "},
+{id:    "M017"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon "},
+{id:    "M018"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon "},
+{id:    "M025"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 1/8 ",dimensiones:" 2.410   x   1.200   ",material : "   Auto limpiable     "},
+{id:    "M050"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon "},
+{id:    "M007"  ,tipo :"    Malla live Arpa serp cribas alta frecuencia ", abertura : " 3/16    ",dimensiones:" 1.830   x   1.830   ",material : "   Auto limpiable     "},
+{id:    "M005"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.800   x   1.240   ",material : "  Acero al carbon "},
+{id:    "M012"  ,tipo :"    Malla Rectangular (Dañada)  ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Autolimpiable   "},
+{id:    "M013"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.450   ",material : "  Alto carbon "},
+{id:    "M014"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon "},
+{id:    "M021"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.780   x   1.270   ",material : "  Acero al carbon "},
+{id:    "M022"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.560   x   1.280   ",material : "  Acero al carbon "},
+{id:    "M023"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.270   x   1.550   ",material : "  Acero al carbon "},
+{id:    "M027"  ,tipo :"    Malla Rectangular   ", abertura : " 1/2 ",dimensiones:" 1.270   x   2.700   ",material : "  Acero al carbon "},
+{id:    "M029"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 2.800   x   1.220   ",material : "   Auto limpiable     "},
+{id:    "M032"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon "},
+{id:    "M033"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon "},
+{id:    "M034"  ,tipo :"    Malla rectangular   ", abertura : " 1/4 ",dimensiones:" 0.530   x   1.150   ",material : "  Autolimpiable   "},
+{id:    "M036"  ,tipo :"    Malla cuadrada  ", abertura : " 3/4 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon "},
+{id:    "M037"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon "},
+{id:    "M038"  ,tipo :"    Malla Rectangular   ", abertura : " 3/32    ",dimensiones:" 1.200   x   1.500   ",material : "  Acero al carbon "},
+{id:    "M039"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  Acero al carbon "},
+{id:    "M040"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  aluminio    "},
+{id:    "M041"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   "},
+{id:    "M045"  ,tipo :"    Malla live Arpa serp    ", abertura : " 3/32    ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   "},
+{id:    "M046"  ,tipo :"    Malla cuadrada  ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon "},
+{id:    "M047"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/4 ",dimensiones:" 1.040   x   1.105   ",material : "  Autolimpiable   "},
+{id:    "M002"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon "},
+{id:    "M001"   ,tipo :"    Malla cuadrada cribas alta frecuencia   ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Acero al carbon "},
+{id:    "M003"   ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon "},
+{id:    "M011"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/4 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon "},
+{id:    "M031"  ,tipo :"    Malla cuadrada  ", abertura : " 2-1/2   ",dimensiones:" 1.500   x   2.330   ",material : "  0   "},
+{id:    "M035"  ,tipo :"    Malla cuadrada  ", abertura : " 7/16    ",dimensiones:" 1.290   x   1.550   ",material : "  Autolimpiable   "},
+{id:    "M049"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 1.550   x   1.300   ",material : "  0   "},
+{id:    "M052"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
+{id:    "M053"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
+{id:    "M054"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/4 ",dimensiones:" 1.220   x   1.820   ",material : "  Autolimpiable   "},
+{id:    "M055"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/4 ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
+{id:    "M056"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  0   "},
+{id:    "M057"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
+{id:    "M058"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.480   x   1.220   ",material : "  0   "},
+{id:    "M059"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 2.480   x   1.240   ",material : "  0   "},
+{id:    "M060"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Acero al carbon "},
+{id:    "M061"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Autolimpiable   "},
+{id:    "M062"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 0.970   x   1.100   ",material : "  Autolimpiable   "},
+{id:    "M063"  ,tipo :"    Malla cuadrada  ", abertura : " 1   ",dimensiones:" 1.130   x   1.760   ",material : "  0   "},
+{id:    "M064"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.500   x   1.540   ",material : "  0   "},
+{id:    "M065"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.530   x   1.280   ",material : "  0   "},
+{id:    "M066"  ,tipo :"    Malla ALTA FRECUENCIA   ", abertura : " 1/8 ",dimensiones:" 1.800   x   1.800   ",material : "  0   "},
+{id:    "M067"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  0   "},
+{id:    "M068"  ,tipo :"    Malla cuadrada  ", abertura : " 3/32    ",dimensiones:" 1.800   x   0.940   ",material : "  0   "},
+{id:    "M069"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  0   "},
+{id:    "M070"  ,tipo :"    Malla cuadrada  ", abertura : " 0   ",dimensiones:" 1.030   x   1.500   ",material : "  0   "},
+
+
+
+    ];
+
+    function mostrarMallas() {
+        const contenedor = document.getElementById('contenedorMallas');
+        contenedor.innerHTML = mallas.map(malla => `
+            <div class="card">
+                <div class="img-container">
+                    <img src="img/mallas/${malla.id}.jpg" class="img-malla" 
+                         onerror="this.src='img/sin-foto.jpg'">
+                </div>
+                <div class="info">
+                    <div class="id-label">ID: ${malla.id}</div>
+                    <span class="tipo-malla">${malla.tipo}</span>
+                    <div class="especificaciones">
+                        <span class="abertura">Luz: ${malla.abertura}</span>
+                        <span class="medida-malla">Dim: ${malla.dimensiones}</span>
+                    </div>
+                </div>
+                <div class="detalles-footer">
+                    <span class="material-tag">${malla.material}</span>
+                    <a href="img/mallas/${malla.id}.jpg" target="_blank" class="btn-ver">DETALLES</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filtrarMallas() {
+        const busqueda = document.getElementById('buscador').value.toUpperCase();
+        const cards = document.getElementsByClassName('card');
+        
+        for (let card of cards) {
+            const texto = card.innerText.toUpperCase();
+            card.style.display = texto.includes(busqueda) ? "" : "none";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', mostrarMallas);
+</script>
+
+</body>
+</html>
