@@ -6,15 +6,16 @@
     <title>Inventario de Mallas - CATRINSA</title>
     <style>
         /* Estilos alineados a la identidad de CATRINSA */
-        /* Elaboro Ing. Luis Gerardo Vazquez Carrier
-           Fecha : 17/05/2026
+        /* Elaboro : Ing. Luis Gerardo Vazquez Carrier */
+        /* Proyecto: Control de Almacenes CATRINSA */
+        /* Actualizo: 17/05/2026 */
 
-        */
         :root { 
             --catrinsa-blue: #000080; 
             --catrinsa-gray: #8e8e8e; 
             --catrinsa-white: #ffffff; 
             --bg-body: #f4f7f6; 
+            --alert-green: #2e7d32;
         }
         
         body { 
@@ -105,30 +106,49 @@
         }
 
         .tipo-malla { 
-            font-size: 1.2rem; 
+            font-size: 1.15rem; 
             font-weight: bold; 
             color: #333; 
             margin-bottom: 10px; 
             display: block; 
+            min-height: 42px; /* Mantiene la misma altura en textos de 1 o 2 renglones */
         }
 
         .especificaciones {
             background: #f8f9fa;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             margin-top: 10px;
+            text-align: left;
         }
+
+        .linea-espec {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .linea-espec:last-child { margin-bottom: 0; }
 
         .abertura { 
-            font-size: 1.1rem; 
             color: var(--catrinsa-blue); 
             font-weight: bold; 
-            display: block;
+        }
+        
+        .label-control {
+            font-weight: 600;
+            color: #555;
         }
 
-        .medida-malla {
-            font-size: 0.9rem;
-            color: #555;
+        .loc-tag {
+            color: #b71c1c;
+            font-weight: bold;
+        }
+
+        .stock-tag {
+            color: var(--alert-green);
+            font-weight: bold;
         }
         
         .detalles-footer { 
@@ -148,6 +168,10 @@
             background: #e9ecef;
             padding: 4px 8px;
             border-radius: 4px;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .btn-ver { 
@@ -172,83 +196,84 @@
         <a href="index.html" style="color: var(--catrinsa-blue); font-weight: bold; text-decoration: none;">← Volver al Menú</a>
     </header>
 
-    <input type="text" id="buscador" onkeyup="filtrarMallas()" placeholder="Buscar por ID, Abertura, Material o Tipo...">
+    <input type="text" id="buscador" onkeyup="filtrarMallas()" placeholder="Buscar por ID, Abertura, Material, Localización o Tipo...">
 
-    <div class="grid-mallas" id="contenedorMallas">
-        </div>
+    <div class="grid-mallas" id="contenedorMallas"></div>
 </div>
 
 <script>
-    /* LISTA DE DATOS DE MALLAS
+    /* LISTA DE DATOS DE MALLAS 17 May 2026 GVAZQUEZ
        id: Nombre de la foto en img/mallas/
+       loc: Localización física en el almacén (Estante, Sección, Patio, etc.)
+       exist: Cantidad actual disponible
     */
     const mallas = [
-        {id:    "M004"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Alto carbon "},
-{id:    "M009"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon "},
-{id:    "M026"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     "},
-{id:    "M028"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   0.620   ",material : "   Auto limpiable     "},
-{id:    "M030"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     "},
-{id:    "M048"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon "},
-{id:    "M019"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon "},
-{id:    "M020"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 7/8 ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon "},
-{id:    "M044"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon "},
-{id:    "M051"  ,tipo :"    Malla Rectangular criba 5x20    ", abertura : " 3/8x 1-1/2  ",dimensiones:" 2.490   x   1.200   ",material : "  Acero al carbon "},
-{id:    "M008"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 3/16    ",dimensiones:" 2.480   x   1.240   ",material : "   Auto limpiable     "},
-{id:    "M010"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon "},
-{id:    "M015"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon "},
-{id:    "M016"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1   ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon "},
-{id:    "M017"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon "},
-{id:    "M018"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon "},
-{id:    "M025"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 1/8 ",dimensiones:" 2.410   x   1.200   ",material : "   Auto limpiable     "},
-{id:    "M050"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon "},
-{id:    "M007"  ,tipo :"    Malla live Arpa serp cribas alta frecuencia ", abertura : " 3/16    ",dimensiones:" 1.830   x   1.830   ",material : "   Auto limpiable     "},
-{id:    "M005"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.800   x   1.240   ",material : "  Acero al carbon "},
-{id:    "M012"  ,tipo :"    Malla Rectangular (Dañada)  ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Autolimpiable   "},
-{id:    "M013"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.450   ",material : "  Alto carbon "},
-{id:    "M014"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon "},
-{id:    "M021"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.780   x   1.270   ",material : "  Acero al carbon "},
-{id:    "M022"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.560   x   1.280   ",material : "  Acero al carbon "},
-{id:    "M023"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.270   x   1.550   ",material : "  Acero al carbon "},
-{id:    "M027"  ,tipo :"    Malla Rectangular   ", abertura : " 1/2 ",dimensiones:" 1.270   x   2.700   ",material : "  Acero al carbon "},
-{id:    "M029"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 2.800   x   1.220   ",material : "   Auto limpiable     "},
-{id:    "M032"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon "},
-{id:    "M033"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon "},
-{id:    "M034"  ,tipo :"    Malla rectangular   ", abertura : " 1/4 ",dimensiones:" 0.530   x   1.150   ",material : "  Autolimpiable   "},
-{id:    "M036"  ,tipo :"    Malla cuadrada  ", abertura : " 3/4 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon "},
-{id:    "M037"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon "},
-{id:    "M038"  ,tipo :"    Malla Rectangular   ", abertura : " 3/32    ",dimensiones:" 1.200   x   1.500   ",material : "  Acero al carbon "},
-{id:    "M039"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  Acero al carbon "},
-{id:    "M040"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  aluminio    "},
-{id:    "M041"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   "},
-{id:    "M045"  ,tipo :"    Malla live Arpa serp    ", abertura : " 3/32    ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   "},
-{id:    "M046"  ,tipo :"    Malla cuadrada  ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon "},
-{id:    "M047"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/4 ",dimensiones:" 1.040   x   1.105   ",material : "  Autolimpiable   "},
-{id:    "M002"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon "},
-{id:    "M001"   ,tipo :"    Malla cuadrada cribas alta frecuencia   ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Acero al carbon "},
-{id:    "M003"   ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon "},
-{id:    "M011"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/4 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon "},
-{id:    "M031"  ,tipo :"    Malla cuadrada  ", abertura : " 2-1/2   ",dimensiones:" 1.500   x   2.330   ",material : "  0   "},
-{id:    "M035"  ,tipo :"    Malla cuadrada  ", abertura : " 7/16    ",dimensiones:" 1.290   x   1.550   ",material : "  Autolimpiable   "},
-{id:    "M049"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 1.550   x   1.300   ",material : "  0   "},
-{id:    "M052"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
-{id:    "M053"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
-{id:    "M054"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/4 ",dimensiones:" 1.220   x   1.820   ",material : "  Autolimpiable   "},
-{id:    "M055"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/4 ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
-{id:    "M056"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  0   "},
-{id:    "M057"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.840   x   1.220   ",material : "  0   "},
-{id:    "M058"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.480   x   1.220   ",material : "  0   "},
-{id:    "M059"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 2.480   x   1.240   ",material : "  0   "},
-{id:    "M060"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Acero al carbon "},
-{id:    "M061"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Autolimpiable   "},
-{id:    "M062"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 0.970   x   1.100   ",material : "  Autolimpiable   "},
-{id:    "M063"  ,tipo :"    Malla cuadrada  ", abertura : " 1   ",dimensiones:" 1.130   x   1.760   ",material : "  0   "},
-{id:    "M064"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.500   x   1.540   ",material : "  0   "},
-{id:    "M065"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.530   x   1.280   ",material : "  0   "},
-{id:    "M066"  ,tipo :"    Malla ALTA FRECUENCIA   ", abertura : " 1/8 ",dimensiones:" 1.800   x   1.800   ",material : "  0   "},
-{id:    "M067"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  0   "},
-{id:    "M068"  ,tipo :"    Malla cuadrada  ", abertura : " 3/32    ",dimensiones:" 1.800   x   0.940   ",material : "  0   "},
-{id:    "M069"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  0   "},
-{id:    "M070"  ,tipo :"    Malla cuadrada  ", abertura : " 0   ",dimensiones:" 1.030   x   1.500   ",material : "  0   "},
+{id:    "M004"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M009"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  9   },
+{id:    "M026"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M028"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   0.620   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M030"  ,tipo :"    Malla live Arpa serp criba  # 3 ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.220   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  21  },
+{id:    "M048"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M019"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M020"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 7/8 ",dimensiones:" 1.420   x   1.200   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  7   },
+{id:    "M044"  ,tipo :"    Malla cuadrada criba # 4    ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M051"  ,tipo :"    Malla Rectangular criba 5x20    ", abertura : " 3/8x 1-1/2  ",dimensiones:" 2.490   x   1.200   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M008"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 3/16    ",dimensiones:" 2.480   x   1.240   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M010"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  10  },
+{id:    "M015"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M016"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1   ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M017"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.490   x   1.200   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M018"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 7/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M025"  ,tipo :"    Malla live Arpa serp criba 8x20 ", abertura : " 1/8 ",dimensiones:" 2.410   x   1.200   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M050"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.480   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  13  },
+{id:    "M007"  ,tipo :"    Malla live Arpa serp cribas alta frecuencia ", abertura : " 3/16    ",dimensiones:" 1.830   x   1.830   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  7   },
+{id:    "M005"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.800   x   1.240   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M012"  ,tipo :"    Malla Rectangular (Dañada)  ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M013"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.200   x   2.450   ",material : "  Alto carbon ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M014"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.200   x   2.450   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M021"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.780   x   1.270   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M022"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.560   x   1.280   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  7   },
+{id:    "M023"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.270   x   1.550   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  9   },
+{id:    "M027"  ,tipo :"    Malla Rectangular   ", abertura : " 1/2 ",dimensiones:" 1.270   x   2.700   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M029"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 2.800   x   1.220   ",material : "   Auto limpiable     ", loc :"   Rack A-1    ", exist :  18  },
+{id:    "M032"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M033"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M034"  ,tipo :"    Malla rectangular   ", abertura : " 1/4 ",dimensiones:" 0.530   x   1.150   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M036"  ,tipo :"    Malla cuadrada  ", abertura : " 3/4 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  10  },
+{id:    "M037"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.020   x   1.500   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M038"  ,tipo :"    Malla Rectangular   ", abertura : " 3/32    ",dimensiones:" 1.200   x   1.500   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M039"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M040"  ,tipo :"    Malla cuadrada  ", abertura : " 1/8 ",dimensiones:" 1.030   x   1.500   ",material : "  aluminio    ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M041"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/8 ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M045"  ,tipo :"    Malla live Arpa serp    ", abertura : " 3/32    ",dimensiones:" 1.180   x   0.947   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  11  },
+{id:    "M046"  ,tipo :"    Malla cuadrada  ", abertura : " 1-1/2   ",dimensiones:" 1.420   x   1.210   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M047"  ,tipo :"    Malla live Arpa serp    ", abertura : " 1/4 ",dimensiones:" 1.040   x   1.105   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M002"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M001"  ,tipo :"    Malla cuadrada cribas alta frecuencia   ", abertura : " 1/4 ",dimensiones:" 1.830   x   1.830   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M003"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/2 ",dimensiones:" 1.840   x   1.220   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M011"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 3/4 ",dimensiones:" 1.200   x   2.490   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M031"  ,tipo :"    Malla cuadrada  ", abertura : " 2-1/2   ",dimensiones:" 1.500   x   2.330   ",material : "  0   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M035"  ,tipo :"    Malla cuadrada  ", abertura : " 7/16    ",dimensiones:" 1.290   x   1.550   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M049"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 1.550   x   1.300   ",material : "  0   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M052"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M053"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1   ",dimensiones:" 1.840   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  4   },
+{id:    "M054"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 1/4 ",dimensiones:" 1.220   x   1.820   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M055"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/4 ",dimensiones:" 1.840   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M056"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 3/8 ",dimensiones:" 1.850   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M057"  ,tipo :"    Malla cuadrada criba  # 3   ", abertura : " 7/8 ",dimensiones:" 1.840   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M058"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/2 ",dimensiones:" 2.480   x   1.220   ",material : "  0   ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M059"  ,tipo :"    Malla cuadrada criba 8x20   ", abertura : " 1/4 ",dimensiones:" 2.480   x   1.240   ",material : "  0   ", loc :"   Rack A-1    ", exist :  3   },
+{id:    "M060"  ,tipo :"    Malla cuadrada  ", abertura : " 7/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Acero al carbon ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M061"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M062"  ,tipo :"    Malla cuadrada  ", abertura : " 5/16    ",dimensiones:" 0.970   x   1.100   ",material : "  Autolimpiable   ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M063"  ,tipo :"    Malla cuadrada  ", abertura : " 1   ",dimensiones:" 1.130   x   1.760   ",material : "  0   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M064"  ,tipo :"    Malla cuadrada  ", abertura : " 1/2 ",dimensiones:" 1.500   x   1.540   ",material : "  0   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M065"  ,tipo :"    Malla cuadrada  ", abertura : " 1/4 ",dimensiones:" 1.530   x   1.280   ",material : "  0   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M066"  ,tipo :"    Malla ALTA FRECUENCIA   ", abertura : " 1/8 ",dimensiones:" 1.800   x   1.800   ",material : "  0   ", loc :"   Rack A-1    ", exist :  5   },
+{id:    "M067"  ,tipo :"    Malla cuadrada  ", abertura : " 3/16    ",dimensiones:" 1.520   x   1.180   ",material : "  0   ", loc :"   Rack A-1    ", exist :  1   },
+{id:    "M068"  ,tipo :"    Malla cuadrada  ", abertura : " 3/32    ",dimensiones:" 1.800   x   0.940   ",material : "  0   ", loc :"   Rack A-1    ", exist :  6   },
+{id:    "M069"  ,tipo :"    Malla cuadrada  ", abertura : " 3/8 ",dimensiones:" 1.530   x   1.280   ",material : "  0   ", loc :"   Rack A-1    ", exist :  2   },
+{id:    "M070"  ,tipo :"    Malla cuadrada  ", abertura : " 0   ",dimensiones:" 1.030   x   1.500   ",material : "  0   ", loc :"   Rack A-1    ", exist :  1   }
 
 
 
@@ -266,12 +291,26 @@
                     <div class="id-label">ID: ${malla.id}</div>
                     <span class="tipo-malla">${malla.tipo}</span>
                     <div class="especificaciones">
-                        <span class="abertura">Luz: ${malla.abertura}</span>
-                        <span class="medida-malla">Dim: ${malla.dimensiones}</span>
+                        <div class="linea-espec">
+                            <span class="label-control">Luz (L):</span>
+                            <span class="abertura">${malla.abertura}</span>
+                        </div>
+                        <div class="linea-espec">
+                            <span class="label-control">Dimens:</span>
+                            <span class="medida-malla">${malla.dimensiones}</span>
+                        </div>
+                        <div class="linea-espec" style="border-top: 1px dashed #ddd; margin-top: 6px; padding-top: 4px;">
+                            <span class="label-control">Ubicación:</span>
+                            <span class="loc-tag">${malla.loc}</span>
+                        </div>
+                        <div class="linea-espec">
+                            <span class="label-control">Existencia:</span>
+                            <span class="stock-tag">${malla.exist} Pzas</span>
+                        </div>
                     </div>
                 </div>
                 <div class="detalles-footer">
-                    <span class="material-tag">${malla.material}</span>
+                    <span class="material-tag" title="${malla.material}">${malla.material}</span>
                     <a href="img/mallas/${malla.id}.jpg" target="_blank" class="btn-ver">DETALLES</a>
                 </div>
             </div>
