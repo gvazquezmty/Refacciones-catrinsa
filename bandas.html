@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Bandas de Transmisión - CATRINSA</title>
+    <style>
+        /* Estilos alineados a la identidad de CATRINSA */
+        /* Proyecto: Control de Almacenes CATRINSA */
+        /* Módulo: Bandas de Transmisión */
+
+        :root { 
+            --catrinsa-blue: #000080; 
+            --catrinsa-gray: #8e8e8e; 
+            --catrinsa-white: #ffffff; 
+            --bg-body: #f4f7f6; 
+            --alert-green: #2e7d32;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        .container { max-width: 1200px; margin: auto; }
+        
+        header { 
+            border-bottom: 4px solid var(--catrinsa-blue); 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        h2 { color: var(--catrinsa-blue); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        #buscador { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 30px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1.1rem; 
+            outline: none; 
+            box-sizing: border-box; 
+            transition: 0.3s; 
+        }
+
+        #buscador:focus { 
+            border-color: var(--catrinsa-blue); 
+            box-shadow: 0 0 8px rgba(0,0,128,0.1); 
+        }
+
+        /* Grid de Tarjetas */
+        .grid-bandas { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            transition: transform 0.3s; 
+            border: 1px solid #eee; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 20px rgba(0,0,128,0.15); 
+        }
+        
+        .img-container { 
+            width: 100%; 
+            height: 180px; 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px; 
+            box-sizing: border-box;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .img-banda { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .info { padding: 20px; flex-grow: 1; text-align: center; }
+        
+        .id-label { 
+            font-size: 0.75rem; 
+            color: var(--catrinsa-gray); 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+        }
+
+        .tipo-banda { 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 10px; 
+            display: block; 
+            min-height: 42px; 
+        }
+
+        .especificaciones {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .linea-espec {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .linea-espec:last-child { margin-bottom: 0; }
+
+        .medida { 
+            color: var(--catrinsa-blue); 
+            font-weight: bold; 
+        }
+        
+        .label-control {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .loc-tag {
+            color: #b71c1c;
+            font-weight: bold;
+        }
+
+        .stock-tag {
+            color: var(--alert-green);
+            font-weight: bold;
+        }
+        
+        .detalles-footer { 
+            border-top: 1px solid #eee; 
+            padding: 15px; 
+            background: #fcfcfc; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .marca-tag { 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            color: #444; 
+            text-transform: uppercase;
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-ver { 
+            background: var(--catrinsa-blue); 
+            color: white; 
+            text-decoration: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            font-size: 0.85rem; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h2>Inventario de Bandas de Transmisión</h2>
+            <small style="color: #666;">CATRINSA - Control de Almacenes</small>
+        </div>
+        <a href="index.html" style="color: var(--catrinsa-blue); font-weight: bold; text-decoration: none;">← Volver al Menú</a>
+    </header>
+
+    <input type="text" id="buscador" onkeyup="filtrarBandas()" placeholder="Buscar por ID, Tipo, Medida, Marca o Ubicación...">
+
+    <div class="grid-bandas" id="contenedorBandas"></div>
+</div>
+
+<script>
+    /* LISTA DE DATOS DE BANDAS DE TRANSMISIÓN
+       id: Nombre de la foto en img/bandas/
+       loc: Localización física en el almacén
+       exist: Cantidad actual disponible
+    */
+    const bandas = [
+        // Aquí puedes pegar directamente tu lista de bandas siguiendo este formato de ejemplo:
+       
+
+       { id: "B001", tipo: "Banda  ", medida: " A56 ", marca: " ", loc: "   Bodega  ", exist:   1   },
+{ id: "B002", tipo: "Banda  ", medida: "    B75 ", marca: " ", loc: "   Bodega  ", exist:   1   },
+{ id: "B003", tipo: "Banda  ", medida: "    B100    ", marca: " ", loc: "   Bodega  ", exist:   3   },
+{ id: "B004", tipo: "Banda  ", medida: "    C85 ", marca: " ", loc: "   Bodega  ", exist:   13  },
+{ id: "B005", tipo: "Banda  ", medida: "    C87 ", marca: " ", loc: "   Bodega  ", exist:   4   },
+{ id: "B006", tipo: "Banda  ", medida: "    C90 ", marca: " ", loc: "   Bodega  ", exist:   0   },
+{ id: "B007", tipo: "Banda  ", medida: "    C100    ", marca: " ", loc: "   Bodega  ", exist:   2   },
+{ id: "B008", tipo: "Banda  ", medida: "    C120    ", marca: " ", loc: "   Bodega  ", exist:   13  },
+{ id: "B009", tipo: "Banda  ", medida: "    C126    ", marca: " ", loc: "   Bodega  ", exist:   4   },
+{ id: "B010", tipo: "Banda  ", medida: "    C130    ", marca: " ", loc: "   Bodega  ", exist:   2   },
+{ id: "B011", tipo: "Banda  ", medida: "    C136    ", marca: " ", loc: "   Bodega  ", exist:   4   },
+{ id: "B012", tipo: "Banda  ", medida: "    C173    ", marca: " ", loc: "   Bodega  ", exist:   14  },
+{ id: "B013", tipo: "Banda  ", medida: "    C210    ", marca: " ", loc: "   Bodega  ", exist:   10  },
+{ id: "B014", tipo: "Banda  ", medida: "    C220    ", marca: " ", loc: "   Bodega  ", exist:   9   },
+{ id: "B015", tipo: "Banda  ", medida: "    C225    ", marca: " ", loc: "   Bodega  ", exist:   8   },
+{ id: "B016", tipo: "Banda  ", medida: "    D136    ", marca: " ", loc: "   Bodega  ", exist:   3   },
+{ id: "B017", tipo: "Banda  ", medida: "    D158    ", marca: " ", loc: "   Bodega  ", exist:   4   },
+{ id: "B018", tipo: "Banda  ", medida: "    D240    ", marca: " ", loc: "   Bodega  ", exist:   2   },
+{ id: "B019", tipo: "Banda  ", medida: "    8V2240  ", marca: " ", loc: "   Bodega  ", exist:   20  },
+{ id: "B020", tipo: "Banda  ", medida: "    8V2360  ", marca: " ", loc: "   Bodega  ", exist:   8   },
+{ id: "B021", tipo: "Banda  ", medida: "    22.2 x 325  ", marca: " ", loc: "   Bodega  ", exist:   3   }
+
+
+    ];
+
+    function mostrarBandas() {
+        const contenedor = document.getElementById('contenedorBandas');
+        contenedor.innerHTML = bandas.map(banda => `
+            <div class="card">
+                <div class="img-container">
+                    <img src="img/bandas/${banda.id}.jpg" class="img-banda" 
+                         onerror="this.src='img/sin-foto.jpg'">
+                </div>
+                <div class="info">
+                    <div class="id-label">ID: ${banda.id}</div>
+                    <span class="tipo-banda">${banda.tipo}</span>
+                    <div class="especificaciones">
+                        <div class="linea-espec">
+                            <span class="label-control">Medida / Tipo:</span>
+                            <span class="medida">${banda.medida}</span>
+                        </div>
+                        <div class="linea-espec" style="border-top: 1px dashed #ddd; margin-top: 6px; padding-top: 4px;">
+                            <span class="label-control">Ubicación:</span>
+                            <span class="loc-tag">${banda.loc}</span>
+                        </div>
+                        <div class="linea-espec">
+                            <span class="label-control">Existencia:</span>
+                            <span class="stock-tag">${banda.exist} Pzas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detalles-footer">
+                    <span class="marca-tag" title="${banda.marca}">${banda.marca}</span>
+                    <a href="img/bandas/${banda.id}.jpg" target="_blank" class="btn-ver">DETALLES</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filtrarBandas() {
+        const busqueda = document.getElementById('buscador').value.toUpperCase();
+        const cards = document.getElementsByClassName('card');
+        
+        for (let card of cards) {
+            const texto = card.innerText.toUpperCase();
+            card.style.display = texto.includes(busqueda) ? "" : "none";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', mostrarBandas);
+</script>
+
+</body>
+</html>
