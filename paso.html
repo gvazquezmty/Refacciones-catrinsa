@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página en Construcción - CATRINSA</title>
+    <style>
+        /* Paleta extraída directamente del logotipo de CATRINSA */
+        :root {
+            --catrinsa-blue: #020686;      /* Azul marino del logo */
+            --catrinsa-gray: #8A8D8F;      /* Gris industrial del contorno */
+            --catrinsa-light-gray: #EAEAEA;/* Gris claro de fondo */
+            --catrinsa-dark: #222222;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--catrinsa-light-gray);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--catrinsa-dark);
+            text-align: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 130, 0.1);
+            max-width: 500px;
+            width: 90%;
+            border-top: 6px solid var(--catrinsa-blue);
+            border-bottom: 6px solid var(--catrinsa-gray);
+            box-sizing: border-box;
+        }
+
+        /* Contenedor del icono animado en CSS puro */
+        .icon-container {
+            margin-bottom: 25px;
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Engrane exterior */
+        .gear {
+            font-size: 64px;
+            color: var(--catrinsa-blue);
+            animation: rotate 4s linear infinite;
+            display: inline-block;
+        }
+
+        /* Animación de rotación continua */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        h1 {
+            color: var(--catrinsa-blue);
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: var(--catrinsa-gray);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin: 0 0 30px 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--catrinsa-gray), transparent);
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        .footer {
+            font-size: 0.85rem;
+            color: #777;
+            font-weight: 500;
+        }
+
+        .btn-regresar {
+            display: inline-block;
+            background-color: var(--catrinsa-blue);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-regresar:hover {
+            background-color: #01045c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="icon-container">
+        <span class="gear">⚙️</span>
+    </div>
+
+    <h1>Página en Construcción</h1>
+    <h2>Control de Almacenes</h2>
+    
+    <div class="divider"></div>
+    
+    <p>Estamos trabajando en el desarrollo e implementación de este nuevo módulo para optimizar nuestros inventarios.</p>
+    
+    <a href="index.html" class="btn-regresar">← Volver al Menú Principal</a>
+    
+    <div class="divider"></div>
+    
+    <div class="footer">
+        Desarrollado por: Gerardo Vazquez
